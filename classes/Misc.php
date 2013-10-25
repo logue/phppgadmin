@@ -2270,7 +2270,11 @@
 		function getServers($recordset = false, $group = false) {
 			global $conf;
 
-			$logins = isset($_SESSION['webdbLogin']) && is_array($_SESSION['webdbLogin']) ? $_SESSION['webdbLogin'] : array();
+			if ($conf['autologin']) {
+				$logins = array();
+			else {
+				$logins = isset($_SESSION['webdbLogin']) && is_array($_SESSION['webdbLogin']) ? $_SESSION['webdbLogin'] : array();
+			}
 			$srvs = array();
 
 			if (($group !== false) and ($group !== 'all'))
