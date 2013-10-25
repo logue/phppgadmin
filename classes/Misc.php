@@ -2281,12 +2281,12 @@
 					$group = '';
 			
 			foreach($conf['servers'] as $idx => $info) {
-				$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'];
+				$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb'];
 				if (($group === false) 
 					or (isset($group[$idx]))
 					or ($group === 'all')
 				) {
-					$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'];
+					$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb'];
 					
 					if (isset($logins[$server_id])) $srvs[$server_id] = $logins[$server_id];
 					else $srvs[$server_id] = $info;
@@ -2346,7 +2346,7 @@
 
 			// Otherwise, look for it in the conf file
 			foreach($conf['servers'] as $idx => $info) {
-				if ($server_id == $info['host'].':'.$info['port'].':'.$info['sslmode']) {
+				if ($server_id == $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb']) {
 					// Automatically use shared credentials if available
 					if (!isset($info['username']) && isset($_SESSION['sharedUsername'])) {
 						$info['username'] = $_SESSION['sharedUsername'];
