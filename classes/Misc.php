@@ -2272,6 +2272,7 @@
 
 			if ($conf['autologin']) {
 				$logins = array();
+			}
 			else {
 				$logins = isset($_SESSION['webdbLogin']) && is_array($_SESSION['webdbLogin']) ? $_SESSION['webdbLogin'] : array();
 			}
