@@ -2340,9 +2340,11 @@
 			if ($server_id === null && isset($_REQUEST['server']))
 				$server_id = $_REQUEST['server'];
 
-			// Check for the server in the logged-in list
-			if (isset($_SESSION['webdbLogin'][$server_id]))
-				return $_SESSION['webdbLogin'][$server_id];
+			if (!$conf['autologin']) {
+				// Check for the server in the logged-in list
+				if (isset($_SESSION['webdbLogin'][$server_id]))
+					return $_SESSION['webdbLogin'][$server_id];
+			}
 
 			// Otherwise, look for it in the conf file
 			foreach($conf['servers'] as $idx => $info) {
