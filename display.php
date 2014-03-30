@@ -443,6 +443,7 @@
 		}
 
 		$misc->printTrail(isset($subject) ? $subject : 'database');
+		$misc->printTabs('table','browse');
 
 		/* This code is used when browsing FK in pure-xHTML (without js) */
 		if (isset($_REQUEST['fkey'])) {
@@ -461,7 +462,7 @@
 				$type = 'SELECT';
 			}
 			else {
-				$misc->printTitle($lang['strbrowse']);
+// 				$misc->printTitle($lang['strbrowse']);
 				$type = 'TABLE';
 			}
 		} else {

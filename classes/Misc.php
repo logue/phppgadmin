@@ -1007,12 +1007,40 @@
 
 				case 'table':
 					$tabs = array (
+						'browse' => array(
+							'title' => $lang['strbrowse'],
+							'url'   => 'display.php',
+							'urlvars' => array (
+									'subject' => 'table',
+									'table' => field('table')
+							),
+							'icon'=>'Columns',
+							'branch'=> true,
+							
+						),
 						'columns' => array (
 							'title' => $lang['strcolumns'],
 							'url'   => 'tblproperties.php',
 							'urlvars' => array('subject' => 'table', 'table' => field('table')),
 							'icon'  => 'Columns',
 							'branch'=> true,
+						),
+						'select' => array(
+							'title' => $lang['strselect'],
+							'icon'  => 'Search',
+							'url'   => 'tables.php',
+							'urlvars' => array('subject' => 'table', 'table' => field('table'),'action' => 'confselectrows',),
+							'help'  => 'pg.sql.select',
+						),
+						'insert'=>array(
+							'title' => $lang['strinsert'],
+							'url' => 'tables.php',
+							'urlvars' => array (
+								'action' => 'confinsertrow',
+								'table' => field('table')
+							),
+							'help'  => 'pg.sql.insert',
+							'icon'=>'Operator'
 						),
 						'indexes' => array (
 							'title' => $lang['strindexes'],

@@ -349,7 +349,8 @@
 
 		if ($confirm) {
 			$misc->printTrail('table');
-			$misc->printTitle($lang['strselect'], 'pg.sql.select');
+			$misc->printTabs('table','select');
+// 			$misc->printTitle($lang['strselect'], 'pg.sql.select');
 			$misc->printMsg($msg);
 
 			$attrs = $data->getTableAttributes($_REQUEST['table']);
@@ -456,7 +457,9 @@
 
 		if ($confirm) {
 			$misc->printTrail('table');
-			$misc->printTitle($lang['strinsertrow'], 'pg.sql.insert');
+			$misc->printTabs('table','insert');
+// 			$misc->printTitle($lang['strinsertrow'], 'pg.sql.insert');
+			
 			$misc->printMsg($msg);
 
 			$attrs = $data->getTableAttributes($_REQUEST['table']);
@@ -923,7 +926,6 @@
 				'content' => $lang['strcreatetablelike']
 			);
 		}
-
 		$misc->printNavLinks($navlinks, 'tables-tables', get_defined_vars());
 	}
 	
