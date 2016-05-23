@@ -150,8 +150,8 @@
 	$lang['strstop'] = 'Stop';
 	$lang['strgotoppage'] = 'back to top';
 	$lang['strtheme'] = 'Theme';
-	$lang['strcluster'] = 'Cluster';
-	
+	$lang['strquerywaiting'] = 'Waits';	
+	$lang['strcluster'] = 'Cluster';	
 	// Admin
 	$lang['stradminondatabase'] = 'The following administrative tasks apply on the whole %s database.';
 	$lang['stradminontable'] = 'The following administrative tasks apply on the table %s.';

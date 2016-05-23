@@ -7205,21 +7205,29 @@ class Postgres extends ADODB_base {
 	 * @return A recordset
 	 */
 	function getProcesses($database = null) {
-		if ($database === null)
-			$sql = "SELECT datname, usename, pid, waiting, state_change as query_start,
-                  case when state='idle in transaction' then '<IDLE> in transaction' when state = 'idle' then '<IDLE>' else query end as query
+			$sql = "SELECT procpid, datname, usename, pid, waiting, state_change as query_start,
+                  case when state='idle in transaction' then '<IDLE> in transaction' when state = 'idle' then '<IDLE>' else query end as query 
 				FROM pg_catalog.pg_stat_activity
-				ORDER BY datname, usename, pid";
-		else {
+				ORDER BY datname, usename, procpid";
+		if ($database !== null) {
 			$this->clean($database);
-			$sql = "SELECT datname, usename, pid, waiting, state_change as query_start,
-                  case when state='idle in transaction' then '<IDLE> in transaction' when state = 'idle' then '<IDLE>' else query end as query
-				FROM pg_catalog.pg_stat_activity
-				WHERE datname='{$database}'
-				ORDER BY usename, pid";
+			$dbstmt = "WHERE datname='{$database}'";
+		else {
+			$dbstmt =  "";
 		}
-
-		return $this->selectSet($sql);
+		return $this->selectSet("
+			SELECT
+				*,
+				date_trunc('seconds', now() - query_start) as started_ago
+			FROM pg_catalog.pg_stat_activity
+			{$dbstmt}
+			ORDER BY
+				waiting DESC,
+				current_query = '<IDLE>' ASC,
+				datname,
+				usename,
+				procpid
+		");
 	}
 
 	/**
