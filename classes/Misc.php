@@ -1008,6 +1008,17 @@
 
 				case 'table':
 					$tabs = array (
+						'browse' => array(
+							'title' => $lang['strbrowse'],
+							'url'   => 'display.php',
+							'urlvars' => array (
+									'subject' => 'table',
+									'table' => field('table')
+							),
+							'icon'=>'Columns',
+							'branch'=> true,
+							
+						),
 						'columns' => array (
 							'title' => $lang['strcolumns'],
 							'url'   => 'tblproperties.php',
