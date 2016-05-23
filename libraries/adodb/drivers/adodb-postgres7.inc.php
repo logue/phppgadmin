@@ -22,7 +22,7 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	var $ansiOuter = true;
 	var $charSet = true; //set to true for Postgres 7 and above - PG client supports encodings
 	
-	function __construct()
+	public function __construct() 
 	{
 		parent::__construct();
 		if (ADODB_ASSOC_CASE !== 2) {
@@ -215,7 +215,7 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 	var $databaseType = "postgres7";
 	
 	
-	function __construct($queryID,$mode=false)
+	public function __construct($queryID,$mode=false) 
 	{
 		parent::__construct($queryID,$mode);
 	}
@@ -310,4 +310,3 @@ class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
 		return false;
 	}
 }
-?>
