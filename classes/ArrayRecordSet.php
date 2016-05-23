@@ -18,11 +18,11 @@ class ArrayRecordSet {
 		$this->fields = reset($this->_array);
 		if ($this->fields === false) $this->EOF = true;
 	}
-	
+
 	function recordCount() {
 		return $this->_count;
 	}
-	
+
 	function moveNext() {
 		$this->fields = next($this->_array);
 		if ($this->fields === false) $this->EOF = true;
