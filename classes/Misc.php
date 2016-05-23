@@ -2348,7 +2348,12 @@
 		function getServers($recordset = false, $group = false) {
 			global $conf;
 
+			if ($conf['autologin']) {
+				$logins = array();
+			}
+			else {
 			$logins = isset($_SESSION['webdbLogin']) && is_array($_SESSION['webdbLogin']) ? $_SESSION['webdbLogin'] : array();
+			}
 			$srvs = array();
 
 			if (($group !== false) and ($group !== 'all'))
@@ -2359,12 +2364,12 @@
 					$group = '';
 
 			foreach($conf['servers'] as $idx => $info) {
-				$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'];
+				$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb'].':'.$info['username'];
 				if (($group === false)
 					or (isset($group[$idx]))
 					or ($group === 'all')
 				) {
-					$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'];
+					$server_id = $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb'].':'.$info['username'];
 
 					if (isset($logins[$server_id])) $srvs[$server_id] = $logins[$server_id];
 					else $srvs[$server_id] = $info;
@@ -2418,13 +2423,15 @@
 			if ($server_id === null && isset($_REQUEST['server']))
 				$server_id = $_REQUEST['server'];
 
+			if (!$conf['autologin']) {
 			// Check for the server in the logged-in list
 			if (isset($_SESSION['webdbLogin'][$server_id]))
 				return $_SESSION['webdbLogin'][$server_id];
+			}
 
 			// Otherwise, look for it in the conf file
 			foreach($conf['servers'] as $idx => $info) {
-				if ($server_id == $info['host'].':'.$info['port'].':'.$info['sslmode']) {
+				if ($server_id == $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb'].':'.$info['username']) {
 					// Automatically use shared credentials if available
 					if (!isset($info['username']) && isset($_SESSION['sharedUsername'])) {
 						$info['username'] = $_SESSION['sharedUsername'];
