@@ -7212,7 +7212,7 @@ class Postgres extends ADODB_base {
 		if ($database !== null) {
 			$this->clean($database);
 			$dbstmt = "WHERE datname='{$database}'";
-		else {
+		}else {
 			$dbstmt =  "";
 		}
 		return $this->selectSet("

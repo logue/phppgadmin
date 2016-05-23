@@ -230,7 +230,7 @@
 
 	//------------------
 	// class for caching
-	class __construct {
+	class ADODB_Cache_File {
 
 		var $createdir = true; // requires creation of temp dirs
 
@@ -2897,6 +2897,11 @@ http://www.stanford.edu/dept/itss/docs/oracle/10g/server.101/b10759/statements_1
 	 *
 	 */
 	function __construct($queryID)
+	{
+		$this->init_query_id($queryID);
+	}
+
+	function init_query_id($queryID)
 	{
 		$this->_queryID = $queryID;
 	}
