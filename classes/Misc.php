@@ -2433,22 +2433,25 @@
 
 			// Otherwise, look for it in the conf file
 			foreach($conf['servers'] as $idx => $info) {
-				
-				if( isset($info['username'] ) && isset($info['host'] ) && isset($info['port'] ) && isset($info['sslmode'] )&& isset($info['defaultdb'] ) ){
-					if ($server_id == $info['host'].':'.$info['port'].':'.$info['sslmode'].':'.$info['defaultdb'].':'.$info['username']) {
-						// Automatically use shared credentials if available
-						if (!isset($info['username']) && isset($_SESSION['sharedUsername'])) {
-							$info['username'] = $_SESSION['sharedUsername'];
-							$info['password'] = $_SESSION['sharedPassword'];
-							$_reload_browser = true;
-							$this->setServerInfo(null, $info, $server_id);
-						}
-
-						return $info;
+				$test_id = implode(array(
+					isset($info['host']) ? $info['host'] : "",
+					isset($info['port']) ? $info['port'] : "",
+					isset($info['sslmode']) ? $info['sslmode'] : "",
+					isset($info['defaultdb']) ? $info['defaultdb'] : "",
+					isset($info['username']) ? $info['username'] : "",
+				), ":" );
+				if ($server_id ==$test_id) {
+					// Automatically use shared credentials if available
+					if (!isset($info['username']) && isset($_SESSION['sharedUsername'])) {
+						$info['username'] = $_SESSION['sharedUsername'];
+						$info['password'] = $_SESSION['sharedPassword'];
+						$_reload_browser = true;
+						$this->setServerInfo(null, $info, $server_id);
 					}
+
+					return $info;
 				}
 			}
-
 			if ($server_id === null){
 				return null;
 			} else {
