@@ -1095,13 +1095,14 @@ class Postgres extends ADODB_base {
 					WHERE schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
 					ORDER BY schemaname, tablename";
 		} else {
+			// r = ordinary table, i = index, S = sequence, v = view, m = materialized view, c = composite type, t = TOAST table, f = foreign table
 			$sql = "SELECT c.relname, pg_catalog.pg_get_userbyid(c.relowner) AS relowner,
 						pg_catalog.obj_description(c.oid, 'pg_class') AS relcomment,
 						reltuples::bigint,
 						(SELECT spcname FROM pg_catalog.pg_tablespace pt WHERE pt.oid=c.reltablespace) AS tablespace
 					FROM pg_catalog.pg_class c
 					LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
-					WHERE c.relkind = 'r'
+					WHERE (c.relkind = 'r' OR c.relkind = 'm' OR c.relkind = 't' OR c.relkind = 'f')
 					AND nspname='{$c_schema}'
 					ORDER BY c.relname";
 		}
