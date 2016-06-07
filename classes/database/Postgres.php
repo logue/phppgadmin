@@ -3043,12 +3043,13 @@ class Postgres extends ADODB_base {
 	function getViews() {
 		$c_schema = $this->_schema;
 		$this->clean($c_schema);
+		// r = ordinary table, i = index, S = sequence, v = view, m = materialized view, c = composite type, t = TOAST table, f = foreign table
 		$sql = "
 			SELECT c.relname, pg_catalog.pg_get_userbyid(c.relowner) AS relowner,
 				pg_catalog.obj_description(c.oid, 'pg_class') AS relcomment
 			FROM pg_catalog.pg_class c
 				LEFT JOIN pg_catalog.pg_namespace n ON (n.oid = c.relnamespace)
-			WHERE (n.nspname='{$c_schema}') AND (c.relkind = 'v'::\"char\")
+			WHERE (n.nspname='{$c_schema}') AND (c.relkind = 'v'::\"char\" OR (c.relkind = 'm'::\"char\") )
 			ORDER BY relname";
 
 		return $this->selectSet($sql);
@@ -7206,10 +7207,10 @@ class Postgres extends ADODB_base {
 	 * @return A recordset
 	 */
 	function getProcesses($database = null) {
-			$sql = "SELECT procpid, datname, usename, pid, waiting, state_change as query_start,
+			$sql = "SELECT pid, datname, usename, pid, waiting, state_change as query_start,
                   case when state='idle in transaction' then '<IDLE> in transaction' when state = 'idle' then '<IDLE>' else query end as query 
 				FROM pg_catalog.pg_stat_activity
-				ORDER BY datname, usename, procpid";
+				ORDER BY datname, usename, pid";
 		if ($database !== null) {
 			$this->clean($database);
 			$dbstmt = "WHERE datname='{$database}'";
@@ -7224,10 +7225,10 @@ class Postgres extends ADODB_base {
 			{$dbstmt}
 			ORDER BY
 				waiting DESC,
-				current_query = '<IDLE>' ASC,
+				query = '<IDLE>' ASC,
 				datname,
 				usename,
-				procpid
+				pid
 		");
 	}
 

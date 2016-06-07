@@ -73,6 +73,22 @@ class ADODB_base {
 		// Execute the statement
 		$rs = $this->conn->Execute($sql);
 
+		global $conf,$misc;
+		if ( $conf['save_queries'] ) {
+			$allow_save = true;
+			if( $conf['save_queries_ignore'] ){
+				for( $i=0; $i<count($conf['save_queries_ignore']);$i++){
+					$matched = preg_match( $conf['save_queries_ignore'][ $i ] , $sql );
+					if( $matched ){
+						$allow_save = false;
+					}
+				}
+			}
+			if($allow_save){
+				$misc->saveScriptHistory($sql);
+			}
+		}
+
 		// If failure, return error value
 		return $this->conn->ErrorNo();
 	}
