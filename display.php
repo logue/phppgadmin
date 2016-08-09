@@ -673,7 +673,53 @@
 		else echo "<p>{$lang['strnodata']}</p>\n";
 
 		// Navigation links
-		$navlinks = array();
+		$navlinks = array(
+			'empty' => array (
+				'attr'=> array (
+					'href' => array (
+					'url' => 'tables.php',
+						'urlvars' => array (
+							'action' => 'confirm_empty',
+							'server' => $_REQUEST['server'],
+							'database' => $_REQUEST['database'],
+							'schema' => $_REQUEST['schema'],
+							'table' => $_REQUEST['table']
+						)
+					)
+				),
+				'content' => $lang['strempty']
+			),
+			'addcolumn' => array (
+				'attr'=> array (
+					'href' => array (
+						'url' => 'tblproperties.php',
+						'urlvars' => array (
+							'action' => 'add_column',
+							'server' => $_REQUEST['server'],
+							'database' => $_REQUEST['database'],
+							'schema' => $_REQUEST['schema'],
+							'table' => $_REQUEST['table']
+						)
+					)
+				),
+				'content' => $lang['straddcolumn']
+			),
+			'alter' => array (
+				'attr'=> array (
+					'href' => array (
+						'url' => 'tblproperties.php',
+						'urlvars' => array (
+							'action' => 'confirm_alter',
+							'server' => $_REQUEST['server'],
+							'database' => $_REQUEST['database'],
+							'schema' => $_REQUEST['schema'],
+							'table' => $_REQUEST['table']
+						)
+					)
+				),
+				'content' => $lang['stralter']
+			)
+		);
 
 		$fields = array(
 			'server' => $_REQUEST['server'],
