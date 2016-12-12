@@ -477,6 +477,7 @@ class Postgres extends ADODB_base {
 			FROM pg_catalog.pg_database pdb
 				LEFT JOIN pg_catalog.pg_roles pr ON (pdb.datdba = pr.oid)
 			WHERE true
+				and has_database_privilege( pdb.oid,'CONNECT')
 				{$where}
 				{$clause}
 			{$orderby}";
@@ -844,13 +845,14 @@ class Postgres extends ADODB_base {
 			$where = "WHERE nspname NOT LIKE 'pg@_%' ESCAPE '@' AND nspname != 'information_schema'";
 
 		}
-		else $where = "WHERE nspname !~ '^pg_t(emp_[0-9]+|oast)$'";
+		else $where = "WHERE nspname !~ '^pg(_temp_[0-9]+|_toast)+$'";
 		$sql = "
 			SELECT pn.nspname, pu.rolname AS nspowner,
 				pg_catalog.obj_description(pn.oid, 'pg_namespace') AS nspcomment
 			FROM pg_catalog.pg_namespace pn
 				LEFT JOIN pg_catalog.pg_roles pu ON (pn.nspowner = pu.oid)
 			{$where}
+			AND has_schema_privilege( nspname, 'USAGE')
 			ORDER BY nspname";
 
 		return $this->selectSet($sql);
@@ -868,7 +870,7 @@ class Postgres extends ADODB_base {
 				pg_catalog.obj_description(pn.oid, 'pg_namespace') as nspcomment
 			FROM pg_catalog.pg_namespace pn
 				LEFT JOIN pg_roles as r ON pn.nspowner = r.oid
-			WHERE nspname='{$schema}'";
+			WHERE nspname='{$schema}' AND has_schema_privilege( nspname, 'USAGE')";
 		return $this->selectSet($sql);
 	}
 
@@ -1075,8 +1077,10 @@ class Postgres extends ADODB_base {
 			WHERE c.relkind = 'r'
 			      AND n.nspname = '{$c_schema}'
 			      AND n.oid = c.relnamespace
-			      AND c.relname = '{$table}'";
-
+			      AND c.relname = '{$table}'
+					and has_table_privilege( n.nspname || '.' || c.relname, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') 
+				  ";
+ 
 		return $this->selectSet($sql);
 	}
 
@@ -1093,6 +1097,7 @@ class Postgres extends ADODB_base {
 			$sql = "SELECT schemaname AS nspname, tablename AS relname, tableowner AS relowner
 					FROM pg_catalog.pg_tables
 					WHERE schemaname NOT IN ('pg_catalog', 'information_schema', 'pg_toast')
+					AND has_table_privilege( schemaname || '.'|| tablename, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') 
 					ORDER BY schemaname, tablename";
 		} else {
 			// r = ordinary table, i = index, S = sequence, v = view, m = materialized view, c = composite type, t = TOAST table, f = foreign table
@@ -1103,6 +1108,7 @@ class Postgres extends ADODB_base {
 					FROM pg_catalog.pg_class c
 					LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
 					WHERE (c.relkind = 'r' OR c.relkind = 'm' OR c.relkind = 't' OR c.relkind = 'f')
+					AND has_table_privilege( c.oid, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') 
 					AND nspname='{$c_schema}'
 					ORDER BY c.relname";
 		}
@@ -3031,7 +3037,9 @@ class Postgres extends ADODB_base {
 				pg_catalog.obj_description(c.oid, 'pg_class') AS relcomment
 			FROM pg_catalog.pg_class c
 				LEFT JOIN pg_catalog.pg_namespace n ON (n.oid = c.relnamespace)
-			WHERE (c.relname = '{$view}') AND n.nspname='{$c_schema}'";
+			WHERE (c.relname = '{$view}') AND n.nspname='{$c_schema}'
+			AND has_table_privilege(  nspname || '.'|| relname, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') 
+			";
 
 		return $this->selectSet($sql);
 	}
@@ -3050,6 +3058,7 @@ class Postgres extends ADODB_base {
 			FROM pg_catalog.pg_class c
 				LEFT JOIN pg_catalog.pg_namespace n ON (n.oid = c.relnamespace)
 			WHERE (n.nspname='{$c_schema}') AND (c.relkind = 'v'::\"char\" OR (c.relkind = 'm'::\"char\") )
+			AND has_table_privilege(  nspname || '.'|| relname, 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER') 
 			ORDER BY relname";
 
 		return $this->selectSet($sql);
@@ -4160,7 +4169,7 @@ class Postgres extends ADODB_base {
 			$c_schema = $this->_schema;
 			$this->clean($c_schema);
 			$where = "n.nspname = '{$c_schema}'";
-			$where .= " AND p.proname LIKE 'sp\_%'";
+			$where .= " AND p.proname not LIKE 'sp\_%'";
 			$distinct = '';
 		}
 
@@ -7763,7 +7772,18 @@ class Postgres extends ADODB_base {
 		}
 
 		// Generate count query
-		$count = "SELECT COUNT(*) AS total FROM ($query) AS sub";
+		$pattern = '/^SELECT\s+(\w+|\s+|\*)+ FROM/i';
+		preg_match($pattern, $query, $matches, PREG_OFFSET_CAPTURE);
+
+		if( $matches ){
+			$pattern = '/(SELECT\s+)(\w+|\s+|\*)+ FROM/i';
+			$replacement = '${1} COUNT(*) AS total FROM';
+			$query2 =  preg_replace($pattern, $replacement, $query);
+			$query2 =  preg_replace('/ORDER BY .*/i', '', $query2);		
+			$count =  preg_replace('/LIMIT .*/i', '', $query2);
+		}else{
+			$count = "SELECT COUNT(*) AS total FROM ($query) AS sub4";
+		}
 
 		// Open a transaction
 		$status = $this->beginTransaction();
