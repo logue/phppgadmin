@@ -451,7 +451,7 @@
 			foreach($_REQUEST['fkey'] as $x => $y) {
 				$ops[$x] = '=';
 			}
-			$query = $data->getSelectSQL($_REQUEST['table'], array(), $_REQUEST['fkey'], $ops);
+			$query = $data->getSelectSQL($object, array(), $_REQUEST['fkey'], $ops);
 			$_REQUEST['query'] = $query;
 		}
 		
@@ -516,7 +516,7 @@
 		if (isset($_REQUEST['count'])) $_gets['count'] = $_REQUEST['count'];
 		if (isset($_REQUEST['return'])) $_gets['return'] = $_REQUEST['return'];
 		if (isset($_REQUEST['search_path'])) $_gets['search_path'] = $_REQUEST['search_path'];
-		if (isset($_REQUEST['table'])) $_gets['table'] = $_REQUEST['table'];
+		if (isset($_REQUEST['table'])) $_gets['table'] = $object;
 		if (isset($_REQUEST['sortkey'])) $_gets['sortkey'] = $_REQUEST['sortkey'];
 		if (isset($_REQUEST['sortdir'])) $_gets['sortdir'] = $_REQUEST['sortdir'];
 		if (isset($_REQUEST['nohistory'])) $_gets['nohistory'] = $_REQUEST['nohistory'];
@@ -536,7 +536,7 @@
 				$query = "{$query}.{$_REQUEST['table']};";
 			}
 		}
-		//$query = isset($_REQUEST['query'])? $_REQUEST['query'] : "select * from {$_REQUEST['schema']}.{$_REQUEST['table']};";
+		//$query = isset($_REQUEST['query'])? $_REQUEST['query'] : "select * from {$_REQUEST['schema']}.{$object};";
 		echo $query;
 		echo '</textarea><br><input type="submit"/></form>';
 
@@ -683,7 +683,7 @@
 							'server' => $_REQUEST['server'],
 							'database' => $_REQUEST['database'],
 							'schema' => $_REQUEST['schema'],
-							'table' => $_REQUEST['table']
+							'table' => $object
 						)
 					)
 				),
@@ -698,7 +698,7 @@
 							'server' => $_REQUEST['server'],
 							'database' => $_REQUEST['database'],
 							'schema' => $_REQUEST['schema'],
-							'table' => $_REQUEST['table']
+							'table' => $object
 						)
 					)
 				),
@@ -713,7 +713,7 @@
 							'server' => $_REQUEST['server'],
 							'database' => $_REQUEST['database'],
 							'schema' => $_REQUEST['schema'],
-							'table' => $_REQUEST['table']
+							'table' => $object
 						)
 					)
 				),
@@ -828,7 +828,7 @@
 		}
 
 		// Insert
-		if (isset($object) && (isset($subject) && $subject == 'table'))
+		if (isset($object) && (isset($subject) && $subject == 'table' || $subject == 'view'))
 			$navlinks['insert'] = array (
 				'attr'=> array (
 					'href' => array (
