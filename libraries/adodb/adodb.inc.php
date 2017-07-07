@@ -532,9 +532,8 @@
 			$err = "Missing extension for ".$this->dataProvider;
 			$ret = 0;
 		}
-		if ($fn = $this->raiseErrorFn){
+		 if ($fn = $this->raiseErrorFn){
 			var_export("Błąd");
-			//var_export($this);
 			$fn($this->databaseType,'CONNECT',$this->ErrorNo(),$err,$this->host,$this->database,$this);
 		}
 

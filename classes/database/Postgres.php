@@ -4169,7 +4169,7 @@ class Postgres extends ADODB_base {
 			$c_schema = $this->_schema;
 			$this->clean($c_schema);
 			$where = "n.nspname = '{$c_schema}'";
-			$where .= " AND p.proname not LIKE 'sp\_%'";
+		//	$where .= " AND p.proname not LIKE 'sp\_%'";
 			$distinct = '';
 		}
 
