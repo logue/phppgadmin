@@ -60,7 +60,7 @@ class ADODB_postgres64 extends ADOConnection{
 	var $hasInsertID = true;
 	var $_resultid = false;
   	var $concat_operator='||';
-	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') order by 1";
+	var $metaDatabasesSQL = "select datname from pg_database where datname not in ('template0','template1') AND has_database_privilege(datname, 'CONNECT') order by 1";
     var $metaTablesSQL = "select tablename,'T' from pg_tables where tablename not like 'pg\_%'
 	and tablename not in ('sql_features', 'sql_implementation_info', 'sql_languages',
 	 'sql_packages', 'sql_sizing', 'sql_sizing_profiles')

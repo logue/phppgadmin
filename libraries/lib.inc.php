@@ -52,6 +52,10 @@
 
 	// Start session (if not auto-started)
 	if (!ini_get('session.auto_start')) {
+		ini_set('session.gc_probability', 1);
+		ini_set('session.gc_divisor', 20000);
+		ini_set('session.gc_maxlifetime', $conf['session_time'] );
+		session_set_cookie_params($conf['session_time']);
 		session_name('PPA_ID');
 		session_start();
 	}

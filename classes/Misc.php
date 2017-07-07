@@ -2513,11 +2513,13 @@
 		function saveScriptHistory($script) {
 			list($usec, $sec) = explode(' ', microtime());
 			$time = ((float)$usec + (float)$sec);
-			$_SESSION['history'][$_REQUEST['server']][$_REQUEST['database']]["$time"] = array(
-				'query' => $script,
-				'paginate' => (!isset($_REQUEST['paginate'])? 'f':'t'),
-				'queryid' => $time,
-			);
+			if(isset($_REQUEST['database'])){
+				$_SESSION['history'][$_REQUEST['server']][$_REQUEST['database']]["$time"] = array(
+					'query' => $script,
+					'paginate' => (!isset($_REQUEST['paginate'])? 'f':'t'),
+					'queryid' => $time,
+				);
+			}
 		}
 
 		/*

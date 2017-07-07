@@ -55,7 +55,8 @@
 
 					if ($attrs->recordCount() > 0) {
 						while (!$attrs->EOF) {
-							$selColumns->add(new XHTML_Option($attrs->fields['attname']));
+							$rrr = new XHTML_Option($attrs->fields['attname']);
+							$selColumns->add($rrr);
 							$attrs->moveNext();
 						}
 					}
@@ -158,7 +159,8 @@
 
 				if ($attrs->recordCount() > 0) {
 					while (!$attrs->EOF) {
-						$selColumns->add(new XHTML_Option($attrs->fields['attname']));
+						$rrr = new XHTML_Option($attrs->fields['attname']);
+						$selColumns->add($rrr);
 						$attrs->moveNext();
 					}
 				}
@@ -251,7 +253,8 @@
 
 			if ($attrs->recordCount() > 0) {
 				while (!$attrs->EOF) {
-					$selColumns->add(new XHTML_Option($attrs->fields['attname']));
+					$rrr = new XHTML_Option($attrs->fields['attname']);
+					$selColumns->add($rrr);
 					$attrs->moveNext();
 				}
 			}

@@ -27,6 +27,7 @@
 
 		// Obtain the pg_dump version number and check if the path is good
 		$version = array();
+
 		preg_match("/(\d+(?:\.\d+)?)(?:\.\d+)?.*$/", exec($exe . " --version"), $version);
 
 		if (empty($version)) {
@@ -36,7 +37,6 @@
 				printf($lang['strbadpgdumppath'], $server_info['pg_dump_path']);
 			exit;
 		}
-
 		// Make it do a download, if necessary
 		switch($_REQUEST['output']){
 			case 'show':
@@ -73,7 +73,8 @@
 		}
 
 		// Build command for executing pg_dump.  '-i' means ignore version differences.
-		$cmd = $exe . " -i";
+		//$cmd = $exe . " -i";
+		$cmd = $exe;
 		
 		// we are PG 7.4+, so we always have a schema
 		if (isset($_REQUEST['schema'])) {
@@ -131,9 +132,18 @@
 		if (!$dumpall) {
 			putenv('PGDATABASE=' . $_REQUEST['database']);
 		}
-
+		$cmd	= $cmd . ' 2>&1';
+		
+	//	echo $cmd;
 		// Execute command and return the output to the screen
-		passthru($cmd);
+		
+		passthru($cmd,$err);
+		if($err){
+			echo "\n\nCommand:";
+			var_export($cmd);
+		}
+		//passthru("ls",$err);
+
+		//var_export( passthru($cmd));
 	}
 
-?>
