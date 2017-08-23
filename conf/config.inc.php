@@ -162,7 +162,10 @@
 	 *   );
 	 */
 	$conf['plugins'] = array();
-
+  
+	// Default Session time
+	$conf['session_time']        = 1440;
+	
 	/*****************************************
 	 * Don't modify anything below this line *
 	 *****************************************/
