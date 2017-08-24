@@ -84,6 +84,9 @@
 	/* Example for databases */
 	//$conf['servers'][0]['theme']['db']['specific_db'] = 'default';
 
+	/* Example for setting the tab section for databases with large tables */
+	//$conf['force_tab_sections']['table']['url'] = "tblproperties.php";
+	
 	// Default language. E.g.: 'english', 'polish', etc.  See lang/ directory
 	// for all possibilities. If you specify 'auto' (the default) it will use
 	// your browser preference.
