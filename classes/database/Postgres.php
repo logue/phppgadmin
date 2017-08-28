@@ -7782,7 +7782,7 @@ class Postgres extends ADODB_base {
 			$query2 =  preg_replace('/ORDER BY .*/i', '', $query2);		
 			$count =  preg_replace('/LIMIT .*/i', '', $query2);
 		}else{
-			$count = "SELECT COUNT(*) AS total FROM ($query) AS sub4";
+		  $count = "SELECT COUNT(*) AS total FROM ($query\n) AS sub4";
 		}
 
 		// Open a transaction
@@ -7834,7 +7834,7 @@ class Postgres extends ADODB_base {
 		else $orderby = '';
 
 		// Actually retrieve the rows, with offset and limit
-		$rs = $this->selectSet("SELECT * FROM ({$query}) AS sub {$orderby} LIMIT {$page_size} OFFSET " . ($page - 1) * $page_size);
+		$rs = $this->selectSet("SELECT * FROM ({$query}\n) AS sub {$orderby} LIMIT {$page_size} OFFSET " . ($page - 1) * $page_size);
 		$status = $this->endTransaction();
 		if ($status != 0) {
 			$this->rollbackTransaction();
